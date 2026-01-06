@@ -2,6 +2,18 @@
 import axios from 'axios';
 import type { SearchType, Weather } from '../types';
 
+// TYPE GUARD O ASSERTION
+function isWeatherResponse(weatherResult : unknown): weatherResult is Weather {
+    return(
+        Boolean(weatherResult) &&
+        typeof weatherResult === 'object' &&
+        typeof (weatherResult as Weather).name === 'string' &&
+        typeof (weatherResult as Weather).main.temp === 'number' &&
+        typeof (weatherResult as Weather).main.temp_max === 'number' &&
+        typeof (weatherResult as Weather).main.temp_min === 'number' 
+    )
+}
+
 export default function useWeather() {
  
     const fetchWeather = async(search: SearchType) => {
@@ -23,9 +35,22 @@ export default function useWeather() {
 
            const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${appId}`
 
-           const {data: weatherResult} = await axios<Weather>(weatherUrl);
-           console.log(weatherResult.name);
-           console.log(weatherResult.main.temp);
+        // Castear el type
+        //    const {data: weatherResult} = await axios<Weather>(weatherUrl);
+        //    console.log(weatherResult.name);
+        //    console.log(weatherResult.main.temp);
+
+        // Type Guards
+        const {data: weatherResult} = await axios(weatherUrl);
+
+        const result = isWeatherResponse(weatherResult)
+        if(result){
+            console.log(weatherResult.name)
+        } else {
+            console.log('Respuesta mal formada')
+        }
+        
+     
 
         } catch (error) {
             console.log(error)
@@ -36,3 +61,5 @@ export default function useWeather() {
         fetchWeather
     }
 }
+
+
