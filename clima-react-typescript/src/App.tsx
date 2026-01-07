@@ -6,7 +6,7 @@ import useWeather from "./hooks/useWeather"
 
 function App() {
  
-  const { weather,fetchWeather } = useWeather() 
+  const { weather,fetchWeather, hasWeatherData } = useWeather() 
 
   console.log(import.meta.env)
   return (
@@ -17,9 +17,12 @@ function App() {
         <Form 
           fetchWeather={fetchWeather}
         />
-        <WeatherDetail 
+        {hasWeatherData &&
+          <WeatherDetail 
           weather={weather}
         />
+        }
+       
       </div>
     </>
   )
